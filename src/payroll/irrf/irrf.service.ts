@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { roundMoney } from 'src/common/utils/money.utils';
+import { InssService } from '../inss/inss.service';
 
 @Injectable()
 export class IrrfService {
@@ -11,6 +12,8 @@ export class IrrfService {
     { limit: Infinity, rate: 0.275, deduction: 908.73 },
   ];
 
+  constructor(private readonly inssService: InssService) {}
+
   calculate(base: number): number {
     for (const item of this.irrfTable) {
       if (base <= item.limit) {
@@ -20,5 +23,12 @@ export class IrrfService {
     }
 
     return 0;
+  }
+
+  calculateFromSalary(salary: number) {
+    const inss = this.inssService.calculate(salary);
+    const base = salary - inss;
+
+    return this.calculate(base);
   }
 }

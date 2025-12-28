@@ -1,16 +1,13 @@
 import { Controller, Post, Body } from '@nestjs/common';
 import { PayrollService } from './payroll.service';
-import { InssService } from './inss/inss.service';
+import { SalaryDto } from 'src/common/dtos/salary.dto';
 
 @Controller('payroll')
 export class PayrollController {
-  constructor(
-    private readonly payrollService: PayrollService,
-    private readonly inssService: InssService,
-  ) {}
+  constructor(private readonly payrollService: PayrollService) {}
 
   @Post('calculate')
-  calculate(@Body() body: { salary: number }) {
-    return this.payrollService.calculate(body.salary);
+  calculate(@Body() dto: SalaryDto) {
+    return this.payrollService.calculate(dto.salary);
   }
 }
