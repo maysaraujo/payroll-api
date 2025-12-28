@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { roundMoney } from 'src/common/utils/money.utils';
 
 @Injectable()
 export class InssService {
@@ -24,6 +25,6 @@ export class InssService {
       previousLimit = track.limit;
     }
 
-    return totalInss;
+    return roundMoney(totalInss);
   }
 }
