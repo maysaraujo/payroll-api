@@ -1,13 +1,18 @@
 import { Controller, Post, Body } from '@nestjs/common';
 import { IrrfService } from './irrf.service';
 import { SalaryDto } from 'src/common/dtos/salary.dto';
-import { IrrfResponseDto } from './dto/irrf-response-.dto';
+import { IrrfResponseDto } from './dto/irrf-response.dto';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { CreateIrrfRuleDto } from './dto/create-irrf-rule.dto';
+import { IrrfRuleService } from './irrf-rule.service';
 
 @Controller('irrf')
 @ApiTags('IRRF')
 export class IrrfController {
-  constructor(private readonly irrfService: IrrfService) {}
+  constructor(
+    private readonly irrfService: IrrfService,
+    private readonly irrfRuleService: IrrfRuleService,
+  ) {}
 
   @Post('calculate')
   @ApiOperation({
@@ -27,7 +32,18 @@ export class IrrfController {
       },
     },
   })
-  calculate(@Body() dto: SalaryDto): IrrfResponseDto {
-    return { irrf: this.irrfService.calculateFromSalary(dto.salary) };
+  async calculate(@Body() dto: SalaryDto): Promise<IrrfResponseDto> {
+    const irrf = await this.irrfService.calculateFromSalary(dto.salary);
+    return { irrf };
+  }
+
+  @Post('rules')
+  @ApiOperation({
+    summary: 'Cria as regras do IRRF',
+    description: 'Cria as regras do IRRF para o anual atual',
+  })
+  @ApiBody({ type: CreateIrrfRuleDto })
+  create(@Body() dto: CreateIrrfRuleDto) {
+    return this.irrfRuleService.createRules(dto);
   }
 }

@@ -3,19 +3,23 @@ import { InssService } from './inss/inss.service';
 import { IrrfService } from './irrf/irrf.service';
 import { roundMoney } from 'src/common/utils/money.utils';
 import { FgtsService } from './fgts/fgts.service';
+import { IrrfRuleService } from './irrf/irrf-rule.service';
 
 @Injectable()
 export class PayrollService {
   constructor(
     private readonly inssService: InssService,
     private readonly irrfService: IrrfService,
+    private readonly irrfRuleService: IrrfRuleService,
     private readonly fgtsService: FgtsService,
   ) {}
 
-  calculate(salary: number) {
-    const inss = this.inssService.calculate(salary);
+  async calculate(salary: number) {
+    const inss = await this.inssService.calculate(salary);
     const base = salary - inss;
-    const irrf = this.irrfService.calculate(base);
+    const ruleTracks = await this.irrfRuleService.getCurrentRules();
+    const tracks = ruleTracks?.tracks || [];
+    const irrf = this.irrfService.calculate(base, tracks);
     const netSalary = roundMoney(salary - inss - irrf);
     const fgts = this.fgtsService.calculate(salary);
 

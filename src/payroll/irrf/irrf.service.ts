@@ -1,21 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { roundMoney } from 'src/common/utils/money.utils';
 import { InssService } from '../inss/inss.service';
+import { IrrfTracks } from './schemas/irrf-rule.schema';
+import { IrrfRuleService } from './irrf-rule.service';
 
 @Injectable()
 export class IrrfService {
-  private readonly irrfTable = [
-    { limit: 2428.8, rate: 0, deduction: 0 },
-    { limit: 2826.65, rate: 0.075, deduction: 182.16 },
-    { limit: 3751.05, rate: 0.15, deduction: 394.16 },
-    { limit: 4664.68, rate: 0.225, deduction: 675.49 },
-    { limit: Infinity, rate: 0.275, deduction: 908.73 },
-  ];
+  constructor(
+    private readonly inssService: InssService,
+    private readonly irrfRuleService: IrrfRuleService,
+  ) {}
 
-  constructor(private readonly inssService: InssService) {}
-
-  calculate(base: number): number {
-    for (const item of this.irrfTable) {
+  calculate(base: number, tracks: IrrfTracks[]): number {
+    for (const item of tracks) {
       if (base <= item.limit) {
         const tax = base * item.rate - item.deduction;
         return tax > 0 ? roundMoney(tax) : 0;
@@ -25,10 +22,12 @@ export class IrrfService {
     return 0;
   }
 
-  calculateFromSalary(salary: number) {
-    const inss = this.inssService.calculate(salary);
+  async calculateFromSalary(salary: number) {
+    const inss = await this.inssService.calculate(salary);
     const base = salary - inss;
+    const ruleTracks = await this.irrfRuleService.getCurrentRules();
+    const tracks = ruleTracks?.tracks || [];
 
-    return this.calculate(base);
+    return this.calculate(base, tracks);
   }
 }
