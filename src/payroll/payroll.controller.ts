@@ -41,7 +41,7 @@ export class PayrollController {
       },
     },
   })
-  calculate(@Body() dto: SalaryDto): PayrollResultDto {
+  calculate(@Body() dto: SalaryDto): Promise<PayrollResultDto> {
     return this.payrollService.calculate(dto.salary);
   }
 }

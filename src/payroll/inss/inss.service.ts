@@ -1,21 +1,24 @@
 import { Injectable } from '@nestjs/common';
 import { roundMoney } from 'src/common/utils/money.utils';
+import { InssRuleService } from './inss-rule.service';
 
 @Injectable()
 export class InssService {
-  private readonly inssTracks = [
-    { limit: 1518, rate: 0.075 },
-    { limit: 2793.88, rate: 0.09 },
-    { limit: 4190.83, rate: 0.12 },
-    { limit: 8157.41, rate: 0.14 },
-  ];
+  constructor(private readonly inssRuleService: InssRuleService) {}
 
-  calculate(salary: number): number {
+  async calculate(salary: number): Promise<number> {
+    const rule = await this.inssRuleService.getCurrentRules();
+    const tracks = rule?.tracks;
+
     let remainingSalary = salary;
     let totalInss = 0;
     let previousLimit = 0;
 
-    for (const track of this.inssTracks) {
+    if (!rule || !rule.tracks) {
+      throw new Error('Nenhuma regra de INSS cadastrada para o ano atual.');
+    }
+
+    for (const track of tracks ?? []) {
       if (remainingSalary <= 0) break;
 
       const currentTrack = track.limit - previousLimit;

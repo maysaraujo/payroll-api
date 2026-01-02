@@ -3,11 +3,16 @@ import { InssService } from './inss.service';
 import { SalaryDto } from 'src/common/dtos/salary.dto';
 import { InssResponseDto } from './dto/inss-response.dto';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { CreateInssRuleDto } from './dto/create-inss-rule.dto';
+import { InssRuleService } from './inss-rule.service';
 
 @Controller('inss')
 @ApiTags('INSS')
 export class InssController {
-  constructor(private readonly inssService: InssService) {}
+  constructor(
+    private readonly inssService: InssService,
+    private readonly inssRuleService: InssRuleService,
+  ) {}
 
   @Post('calculate')
   @ApiOperation({
@@ -35,7 +40,18 @@ export class InssController {
       },
     },
   })
-  calculate(@Body() dto: SalaryDto): InssResponseDto {
-    return { inss: this.inssService.calculate(dto.salary) };
+  async calculate(@Body() dto: SalaryDto): Promise<InssResponseDto> {
+    const inss = await this.inssService.calculate(dto.salary);
+    return { inss };
+  }
+
+  @Post('rules')
+  @ApiOperation({
+    summary: 'Cria as regras do INSS',
+    description: 'Cria as regras do INSS para o anual atual',
+  })
+  @ApiBody({ type: CreateInssRuleDto })
+  create(@Body() dto: CreateInssRuleDto) {
+    return this.inssRuleService.createRules(dto);
   }
 }
