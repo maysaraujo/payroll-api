@@ -1,14 +1,16 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsArray, IsNumber, ValidateNested } from 'class-validator';
+import { IsArray, IsNumber, Min, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class CreateInssTrackDto {
   @ApiProperty({ example: 1518 })
-  @IsNumber()
+  @IsNumber({}, { message: 'O valor deve ser um número' })
+  @Min(0, { message: 'O valor deve ser maior ou igual a 0' })
   limit: number;
 
   @ApiProperty({ example: 0.075 })
-  @IsNumber()
+  @IsNumber({}, { message: 'O valor deve ser um número' })
+  @Min(0, { message: 'O valor deve ser maior ou igual a 0' })
   rate: number;
 }
 
@@ -18,6 +20,8 @@ export class CreateInssRuleDto {
     description: 'Ano Fiscal da regra',
   })
   @IsNumber()
+  @IsNumber({}, { message: 'O ano deve ser um número' })
+  @Min(0, { message: 'O ano deve ser maior ou igual a 0' })
   year: number;
 
   @ApiProperty({

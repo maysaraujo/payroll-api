@@ -25,7 +25,7 @@ export class PayrollController {
     },
   })
   @ApiResponse({
-    status: 201,
+    status: 200,
     description: 'Folha calculada com sucesso.',
     type: PayrollResultDto,
     examples: {
@@ -40,6 +40,12 @@ export class PayrollController {
         },
       },
     },
+  })
+  @ApiResponse({ status: 500, description: 'Erro interno ao calcular' })
+  @ApiResponse({ status: 400, description: 'Erro de validação' })
+  @ApiResponse({
+    status: 404,
+    description: 'Regras de INSS ou IRRF não encontradas',
   })
   calculate(@Body() dto: SalaryDto): Promise<PayrollResultDto> {
     return this.payrollService.calculate(dto.salary);
