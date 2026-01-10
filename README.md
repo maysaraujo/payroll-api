@@ -35,7 +35,7 @@ Permite cadastrar faixas progressivas, calcular salários líquidos e visualizar
 
 ## Testar com Swagger
 
-[Clique aqui](https://payroll-api-slwg.onrender.com/api)
+[Documentação da API](https://payroll-api-slwg.onrender.com/api)
 
 ## Como rodar localmente
 
