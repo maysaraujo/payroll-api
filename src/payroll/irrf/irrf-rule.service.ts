@@ -12,7 +12,18 @@ export class IrrfRuleService {
   ) {}
 
   async getRulesForYear(year: number) {
-    return this.ruleModel.findOne({ year }).exec();
+    const rule = await this.ruleModel.findOne({ year }).exec();
+    const existedRule = await this.ruleModel.findOne({ year: year });
+
+    if (!rule) {
+      console.error(`Nenhuma regra de IRRF encontrada para o ano ${year}`);
+    }
+
+    if (existedRule) {
+      console.error(`Já existe uma regra para o ano ${year}`);
+    }
+
+    return rule;
   }
 
   async getCurrentRules() {
