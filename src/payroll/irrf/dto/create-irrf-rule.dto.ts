@@ -1,18 +1,21 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsArray, IsNumber, ValidateNested } from 'class-validator';
+import { IsArray, IsNumber, Min, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class CreateIrrfTrackDto {
   @ApiProperty({ example: 2826.65 })
-  @IsNumber()
+  @IsNumber({}, { message: 'O valor deve ser um número' })
+  @Min(0, { message: 'O valor deve ser maior ou igual a 0' })
   limit: number;
 
   @ApiProperty({ example: 0.075 })
-  @IsNumber()
+  @IsNumber({}, { message: 'O valor deve ser um número' })
+  @Min(0, { message: 'O valor deve ser maior ou igual a 0' })
   rate: number;
 
   @ApiProperty({ example: 182.16 })
-  @IsNumber()
+  @IsNumber({}, { message: 'O valor deve ser um número' })
+  @Min(0, { message: 'O valor deve ser maior ou igual a 0' })
   deduction: number;
 }
 
@@ -21,7 +24,8 @@ export class CreateIrrfRuleDto {
     example: 2026,
     description: 'Ano Fiscal da regra',
   })
-  @IsNumber()
+  @IsNumber({}, { message: 'O ano deve ser um número' })
+  @Min(0, { message: 'O ano deve ser maior ou igual a 0' })
   year: number;
 
   @ApiProperty({
