@@ -1,10 +1,17 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards } from '@nestjs/common';
 import { IrrfService } from './irrf.service';
 import { SalaryDto } from 'src/common/dtos/salary.dto';
 import { IrrfResponseDto } from './dto/irrf-response.dto';
-import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiHeader,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { CreateIrrfRuleDto } from './dto/create-irrf-rule.dto';
 import { IrrfRuleService } from './irrf-rule.service';
+import { ApiKeyGuard } from 'src/common/guards/api-key.guard';
 
 @Controller('irrf')
 @ApiTags('IRRF')
@@ -37,6 +44,11 @@ export class IrrfController {
     return { irrf };
   }
 
+  @ApiHeader({
+    name: 'x-api-key',
+    description: 'API Key necessária para acessar este endpoint',
+  })
+  @UseGuards(ApiKeyGuard)
   @Post('rules')
   @ApiOperation({
     summary: 'Cria as regras do IRRF',
