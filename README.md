@@ -51,4 +51,5 @@ Crie um arquivo .env com:
 ```
 MONGO_URL=mongodb://localhost:27017/payroll-dev
 PORT=3000
+API_KEY=SUA_API_KEY
 ```
