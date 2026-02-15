@@ -1,10 +1,17 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards } from '@nestjs/common';
 import { InssService } from './inss.service';
 import { SalaryDto } from 'src/common/dtos/salary.dto';
 import { InssResponseDto } from './dto/inss-response.dto';
-import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiHeader,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { CreateInssRuleDto } from './dto/create-inss-rule.dto';
 import { InssRuleService } from './inss-rule.service';
+import { ApiKeyGuard } from 'src/common/guards/api-key.guard';
 
 @Controller('inss')
 @ApiTags('INSS')
@@ -45,6 +52,11 @@ export class InssController {
     return { inss };
   }
 
+  @ApiHeader({
+    name: 'x-api-key',
+    description: 'API Key necessária para acessar este endpoint',
+  })
+  @UseGuards(ApiKeyGuard)
   @Post('rules')
   @ApiOperation({
     summary: 'Cria as regras do INSS',
